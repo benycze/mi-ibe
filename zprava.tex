@@ -29,6 +29,12 @@ bookmarks=true,colorlinks=true,unicode=true]{hyperref}
 %Sazba matematickych symbolu
 \def\X#1{$#1$}
 
+%Sazba klicovych slov
+\def\keywords{\vspace{.5em}
+{\textit{Klíčová slova}:\,\relax%
+}}
+\def\endkeywords{\par}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Document begin
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -40,6 +46,8 @@ bookmarks=true,colorlinks=true,unicode=true]{hyperref}
 
 V dnešní době začíná být vnímána počítačová bezpečnost velmi vážně. Internet je decentralizovana síť, ve které na nás čekají různá nebezpečí. Bezpečnost je proto velice důležitým tématem, protože tuto síť potřebujeme pro naší každodenní práci (vyhledávání informací, elektronická pošta, práce na dálku přez zabezpečené SSH spojení a další). Mezi základní obranou linii patří prvek zvaný \underline{firewall}. O tomto základním prvků pojednává tento dokument. Popíše základní typy firewallů se zaměřením na modernější verze. Také uvede určité základní nástroje, které se dají pro tvoření firewallů použít.
 \end{abstract}
+
+\keywords{Firewall, paketový filtr, stavové paketové filtry, IDS, IPS, Aplikační brána, ISO/OSI}
 
 \tableofcontents
 
