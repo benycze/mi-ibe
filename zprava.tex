@@ -3,7 +3,8 @@
 \usepackage[czech]{babel}
 \usepackage{url}
 %\usepackage{stdpage}
-\usepackage[pdftex]{graphicx}
+\usepackage{graphicx}
+\usepackage{epstopdf}
 \usepackage{wrapfig}
 \usepackage[pdftitle={Moderní firewally},pdfauthor={Pavel Benáček},
 bookmarks=true,colorlinks=true,unicode=true]{hyperref}
@@ -102,7 +103,7 @@ Aplikační brány jsou známé i pod názvem proxy firewally. Veškerý provoz 
 
 Vedlejším efektem je to, že server nevidí cílovou adresu klienta, ale adresu proxy serveru. Brány tak automaticky působí jako NAT(Network Address Translation). Funkci NATu mají však i routery a jiné zařízení. Velkou výhodou je bohatá možnost konfigurace, která se zde nabízí. Proxy totiž může nahlédnout do samotného provozu na nejvyšší vrstvě. Získá tak mnohem více informací než paketový filtr nebo stavový paketový filtr.
 
-Nevýhodou je však náročnost na potřebný hardware. Aplikační brány jsou schopny zpracovat mnohonásobně nižsí počet spojení a rychlosti, než paketové filtry. Dalším nepříjemným jevem jsou větší latence.  
+Nevýhodou je však náročnost na potřebný hardware. Aplikační brány jsou schopny zpracovat mnohonásobně nižší počet spojení a rychlosti, než paketové filtry. Dalším nepříjemným jevem jsou větší latence.  
 
 I přez tyto nevýhody je tento druh firewallu velice bezpečným a umožňuje dostatečně nakonfigurovat i podrobná pravidla. Bezesporu se jedná o jednoho ze zástupců moderních firewallů. Představitelé této kategorie jsou například The~Firewall~Toolkit~(fwtk) a z něj vycházející Gauntlet.
 
@@ -118,7 +119,21 @@ Nevýhodou je to, že tyto moderní firewally integrují obrovské množství fu
 Mezi typické představitele patří produkty řady Netscreen, ISG a SSG společnosti Juniper. Podobnou funkcionalitu nabízi i iptables, který je dostupný v Linuxových distribucích. 
 
 \section{IDS a IPS systémy}
-Dnešní moderní firewally velice často spolupracují s takzvanými systémy IDS(Intrusion Detection System) a IPS(Intrusion Prevention System).
+Dnešní moderní firewally velice často spolupracují s takzvanými systémy IDS(Intrusion Detection System) a IPS(Intrusion Prevention System). Tyto systémy zkoumají veškerý provoz do sedmé vrstvy OSI modelu, který prošel firewallem a mohou monitorovat i vybraná místa vnitřní sítě. Provedou detekci, vyhodnocení úrovně hrozby a podle typu upozornění správce sítě nebo v případě prevenčních systémů přímo provedou odfiltrování škodlivého obsahu na základě porovnání se známými obrazci z databáze. Pokročilejší IDS a IPS systémy mohou používat heuristickou analýzu a uživatelsky definované filtry. 
+
+\begin{wrapfigure}{l}{0.55\textwidth}
+	\includegraphics[scale=0.4]{./pict/idps.png}
+	\label{pic:idps_sen}
+	\caption{Zapojení sensoru v síti}
+\end{wrapfigure}
+
+Hlavní rozdíl mezi IDS a IPS systémy je ten, že IDS systémy provádí pouze detekci(neodstraňují hrozbu z toku). IPS systémy jsou schopny na dané nebezpečí reagovat změnou konfigurace prostředí. Mohou tak určitým způsobem eliminovat počáteční hrozbu a dát správci dostatečný čas na to, aby mohl hrozbu eliminovat (popřípadě přeměrovat do části sítě, kde je útočník uzamknut a odkud nemá dále přístup).Mezi typické operace patří ukončování síťových relací, blokování přístupů a v případě nutnosti blokovat veškeré přístupy než bude problém vyřešen. IPS může také čistit provoz od virů, červů, trójských koní, chrání vnitřní síť před útoky DoS (Denial of Service), DDos(Distributed Denial of Service),atd.
+
+Mezi klíčové funkce těchto systémů patří zaznamenávání informací, které souvisí se zjištěným incidentem a informování administrátora bezpečnosti(správce sítě) o incidentu a jeho závažnosti. Tyto systémy však nejsou zcela bezchybné a záleží na jejich kvalitní konfiguraci. Velice zásadním problémem je \textit{záplava incidentů}. Pokud používáme běžné metody notikace formou logů, tak správce může rezignovat na hledání hrozby. Modernější systémy proto používají metody grafické reprezentace, kde se můžou informace zobrazit přehledněji. Mezi slabiny patří detekce nových hrozeb, které se nevystkytují tak často,ale útočí cíleně na ještě nechráněné zranitelnosti v systému. Zapojení sondy je možné vidět na obrázku \ref{pic:idps_sen}.
+
+Mezi typické analytické metody patří zejména stavová analýza komunikačních protokolu. Příkladem může být například kontrola FTP spojení, kdy neověřený uživatel může provádět určitou podmnožinu operací (zobrazení informací nebo poskytnutí uživatelských jmen a hesel). Pokud takový uživatel začne provádět příkazy, na které logicky nemá narok, je takové spojení považováno za podezřelé a systém může na takovéto chování reagovat uzavřením spojení. Tyto systémy se tedy používají jako vhodný doplněk k moderním firewallovým systémům.
+
+\section{Závěr}
+Moderní firewally dnešní doby spolupracují hlavě se systémy IDS a IPS. Důvodem je zejména to, že dokáží doplnit firewall, který provádí zejména filtrování toku (dle stavu protokolu, TCP/UDP portů a IP adres), ale nedokáže detekovat všechny nebezpečí v samotném toku. Pro samotnou hlubší inspekci je nutné nasadit IDS/IPS systém. Takovýto zabezpečovací systém je schopen efektivně obránit perimetr chráněné sítě. Nesmíme se však na tento systém plně spoléhat, protože v dnešní době není nic stoprocentní a to ani drahé a specializované firewallové systémy. Další velice vhodnout metodou je implementovat jednotlivé systémy do samotných zařízení. Takto konceptovaný systém odolá většímu DoS útoku, protože nebude zatežován jediný bod, ale žátěž samotná se rozloží mezi více zařízení. Také útočník má složitější situaci, protože musí zaútočit na dva systémy, které mohou běžet na různých operačních systémech.
 
 \end{document}
-
