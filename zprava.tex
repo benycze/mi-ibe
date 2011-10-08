@@ -23,6 +23,15 @@ bookmarks=true,colorlinks=true,unicode=true]{hyperref}
 \title{Moderní firewally}
 \author{Pavel Benáček}
 
+%%%%%%%%%%%%%%%%%%%%%
+%%Redefs
+%%%%%%%%%%%%%%%%%%%%%
+%Sazba matematickych symbolu
+\def\X#1{$#1$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Document begin
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
 \maketitle
@@ -37,8 +46,6 @@ V dnešní době začíná být vnímána počítačová bezpečnost velmi váž
 \section{Úvod}
 
 Firewall patří mezi základní bezpečnostní mechanismy při výstavbě moderních počítacových sítí. Jeho základním úkolem je provádění filtrace síťového provozu a to jak odchozího, tak i příchozího. Z hlediska bezpečnosti je důležité filtraci a inspekci paketů provádět v obou směrech. Častým omylem je to, že je hlavní inspekce a filtrace provozu prováděna pouze v příchozím směru. Toutu metodou můžeme profiltrovat velkou část nebezpečného provozu v průběhu útoku (například DoS, scan portů ..). Stejně nebezpečný je však i odchozí provoz, kdy může útočník realizovat validní spojení do Internetu, po kterém může být realizován samotný útok do samotného nitra chráněné síťe.
-
-\textbf{TODO -- sepsat obsah částí}
  
 \section{Základní popis a klasifikace}\label{sec:defend} 
 
@@ -50,7 +57,7 @@ Obecně by mohl být firewall definován jako síťové zařízení, které slou
 	\center
 	\includegraphics[scale=0.3]{./pict/firewall.png}
 	\label{pic:firewall_base}
-	\caption{Základní umístění firewallu}
+	\caption{Základní umístění firewallu \cite{ref:wiki_firewall}}
 \end{figure}
 
 Firewally můžeme klasifikovat pomocí různých kriterií. Mezi základní však patří:
@@ -72,7 +79,7 @@ Mezi základní a nespornou vlastnost hardwarových firewallů patří jejich ry
 	\center
 	\includegraphics[scale=0.25]{./pict/osi.png}
 	\label{pic:osi_model}
-	\caption{ISO/OSI model}
+	\caption{ISO/OSI model \cite{ref:osi}}
 \end{figure}
 
 V síťové oblasti se základní funkce dělí do takzvaných vrstev. Jeden z nejpoužívanější je ISO/OSI model. Tento model dělí síťovou komunikaci na sedm vrstev. Nebudu se zde podrobně věnovat popisu jednotlivých vrstev, ale pro pochopení problému filtrace je důležitý aspoň základní popis. ISO/OSI model je naznačen na obrázku \ref{pic:osi_model}. Firewally většinou pracují od vrstvy 3 do vrstvy 7. 
@@ -124,7 +131,7 @@ Dnešní moderní firewally velice často spolupracují s takzvanými systémy I
 \begin{wrapfigure}{l}{0.55\textwidth}
 	\includegraphics[scale=0.4]{./pict/idps.png}
 	\label{pic:idps_sen}
-	\caption{Zapojení sensoru v síti}
+	\caption{Zapojení sensoru v síti \cite{ref:idps}}
 \end{wrapfigure}
 
 Hlavní rozdíl mezi IDS a IPS systémy je ten, že IDS systémy provádí pouze detekci(neodstraňují hrozbu z toku). IPS systémy jsou schopny na dané nebezpečí reagovat změnou konfigurace prostředí. Mohou tak určitým způsobem eliminovat počáteční hrozbu a dát správci dostatečný čas na to, aby mohl hrozbu eliminovat (popřípadě přeměrovat do části sítě, kde je útočník uzamknut a odkud nemá dále přístup).Mezi typické operace patří ukončování síťových relací, blokování přístupů a v případě nutnosti blokovat veškeré přístupy než bude problém vyřešen. IPS může také čistit provoz od virů, červů, trójských koní, chrání vnitřní síť před útoky DoS (Denial of Service), DDos(Distributed Denial of Service),atd.
@@ -135,5 +142,12 @@ Mezi typické analytické metody patří zejména stavová analýza komunikačn�
 
 \section{Závěr}
 Moderní firewally dnešní doby spolupracují hlavě se systémy IDS a IPS. Důvodem je zejména to, že dokáží doplnit firewall, který provádí zejména filtrování toku (dle stavu protokolu, TCP/UDP portů a IP adres), ale nedokáže detekovat všechny nebezpečí v samotném toku. Pro samotnou hlubší inspekci je nutné nasadit IDS/IPS systém. Takovýto zabezpečovací systém je schopen efektivně obránit perimetr chráněné sítě. Nesmíme se však na tento systém plně spoléhat, protože v dnešní době není nic stoprocentní a to ani drahé a specializované firewallové systémy. Další velice vhodnout metodou je implementovat jednotlivé systémy do samotných zařízení. Takto konceptovaný systém odolá většímu DoS útoku, protože nebude zatežován jediný bod, ale žátěž samotná se rozloží mezi více zařízení. Také útočník má složitější situaci, protože musí zaútočit na dva systémy, které mohou běžet na různých operačních systémech.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Reference
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\nocite{*}
+\bibliographystyle{abbrv}{
+	\def\CS{$\cal C\kern-0.1667em\lower.5ex\hbox{$\cal S$}\kern-0.075em $}
+	\bibliography{zprava}
+}
 \end{document}
