@@ -1,4 +1,3 @@
-LATEX=latex -interaction continue
 BIBTEX=bibtex
 LATEX_PDF=pdflatex
 
