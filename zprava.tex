@@ -1,4 +1,4 @@
-\documentclass[11pt,twoside,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
 \usepackage{url}
@@ -6,19 +6,19 @@
 \usepackage{graphicx}
 \usepackage{epstopdf}
 \usepackage{wrapfig}
-\usepackage[pdftitle={Moderní firewally},pdfauthor={Pavel Benáček},
+\usepackage[pdftitle={Moderni firewally},pdfauthor={Pavel Benáček},
 bookmarks=true,colorlinks=true,unicode=true]{hyperref}
 
 %nastaveni normostrany
-\hoffset -1.54cm
-\voffset -0.04pt
-\evensidemargin 1.5cm
-\oddsidemargin 2.5cm
-\topmargin -1.6cm
+%\hoffset -1.54cm
+%\voffset -0.04pt
+%\evensidemargin 1.5cm
+%\oddsidemargin 2.5cm
+%\topmargin -1.6cm
 %%% Vyska textu 237 mm
 %%% Sirka textu 150 mm
-\textheight 237mm
-\textwidth 150mm
+%\textheight 237mm
+%\textwidth 150mm
 
 \title{Moderní firewally}
 \author{Pavel Benáček}
@@ -163,7 +163,17 @@ Typické architektury jsou host-to-gateway a gateway-to-gateway. Gateway-to-gate
 \subsection{Autentizace a šifrování}
 Bez autentizace a šifrování se dnes moderní sítě neobejdou. S použitím vhodného šifrování jsou data zabezpečena tak, že potencionální hacker není schopen zjistit dešifrovací klíč a odhalit tak naši komunikaci. Mezi nejpoužívanější protokoly patří IPSec, který se skládá ze dvou částí. První částí je \textit{Authentication Header}(AH), která slouží pro autentizaci dat v zabezpečené komunikaci. Druhou částí je \textit{Encapsulater Security Payload}(EPS), která realizuje samotné šifrování přenášených dat. Pro šifrování se nejvíce používají metody Data Encryption Standard (DES), triple DES (3DES), Define-Hellmann a RSA. Navíc se využívá hashovacích funkcí (MD5,SHA-1), které slouží pro zkonsturování otisku dat předtím, než se odešlou v šifrované podobě. Příjemce zprávy pak šifrovaná data dešifruje a pomocí hashe ověří, že se data po cestě nezměnila.
 
-Větší bezpečnost a přenosové rychlosti mohou být realizovány pomocí duplikování firewallů. Samotná akcelerace šifrování může být realizována embedovaným hardwarem uvnitř firewallu.
+Větší bezpečnost a přenosové rychlosti mohou být realizovány pomocí duplikování firewallů. Samotná akcelerace šifrování může být realizována embedovaným hardwarem uvnitř firewallu. Navíc se požaduje pokročilá autentizace uživatelů, která je ve valné většině případů centralizovaná (například proti LDAP nebo Active Directory).
+
+\subsection{Ochrana proti Malware}
+Ochrana proti je v dnešní době také důležitým tématem. Zřejmě každý z nás používá na své pracovní stanici antivirový program. Ten však nemusí zachytit veškeré hrozby, jelikož se malware stal velice komplexním a může být schopen obejít i moderní obranné systémy. Očividně tak potřebujeme efektivní produkt, který bude určitou rovnováhou mezi použitelností a ochranou. Je totiž celkem pracné udržovat bezpečnostní software na všech pracovních stanicích, kdy může neaktualizovaný stroj představovat slabé místo v systému. Dnešní moderní firewally tedy implementují určitou detekci/protekci proti malwaru.
+
+\subsection{Další užitečné funkce}
+\textbf{Mobilita} --- Zařízení, která jsou dostupná pomocí DNS jmen, přestávají být funkční za firewallem (nejsou dostupné). Musí se totiž provést povolení provozu dovnitř sítě. Skoro vsechny dnešní mobilní telefony umožňují připojení pomocí wifi sítě. Dle studie bude mobilní telefon nejčastějším přístrojem pro přístup k Internetu. Uživatelé proto budou chtít přístup na svá zařízení z Internetu nezávisle na tom, kde se právě nachází. Navíc se stále více začíná používat technologie VoIP, která začíná stále více nahrazovat klasické telefonní sítě. Uživatelé proto budou požadovat určitou funkci roamingu, aby se mohli připojit z jiné organizace do VoIP sítě domácí organizace
+
+\textbf{Dostupnost} --- Internetové připojení je čím dál důležitější pro podnikání. Navíc se připojení do Internetové sítě stává levnějsím, a proto si firmy mohou dovolit záložní připojení (např. xDSL). Firewall, jakožto hraniční bod sítě, by měl být schopen reagovat na výpadek (například pozměněním své konfigurace) bez nutnosti zásahu administrátora sítě.
+
+\textbf{Management a monitorování} --- Se zvyšujícími se požadavky na dostupnost služeb a sítě je pro administrátory důležité, aby byli schopni jednoduše spravovat a debugovat firewall. Takováto funkce je například důležitá i pro budoucí rozvoj sítě. Nedostatečné monitorování může například vést k tomu, že bude podceněna propustnost linky do Internetu. Toto pak může vést na nedostupnost služeb z venku sítě. 
 
 \section{Závěr}
 Moderní firewally dnešní doby spolupracují hlavě se systémy IDS a IPS. Důvodem je zejména to, že dokáží doplnit firewall, který provádí zejména filtrování toku (dle stavu protokolu, TCP/UDP portů a IP adres), ale nedokáže detekovat všechny nebezpečí v samotném toku. Pro samotnou hlubší inspekci je nutné nasadit IDS/IPS systém. Takovýto zabezpečovací systém je schopen efektivně obránit perimetr chráněné sítě. Nesmíme se však na tento systém plně spoléhat, protože v dnešní době není nic stoprocentní a to ani drahé a specializované firewallové systémy. Další velice vhodnout metodou je implementovat jednotlivé systémy do samotných zařízení. Takto konceptovaný systém odolá většímu DoS útoku, protože nebude zatežován jediný bod, ale žátěž samotná se rozloží mezi více zařízení. Také útočník má složitější situaci, protože musí zaútočit na dva systémy, které mohou běžet na různých operačních systémech.
