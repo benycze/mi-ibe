@@ -43,29 +43,28 @@ bookmarks=true,colorlinks=true,unicode=true]{hyperref}
 \maketitle
 
 \begin{abstract}
-
-V dnešní době začíná být vnímána počítačová bezpečnost velmi vážně. Internet je decentralizovana síť, ve které na nás čekají různá nebezpečí. Bezpečnost je proto velice důležitým tématem, protože tuto síť potřebujeme pro naší každodenní práci (vyhledávání informací, elektronická pošta, práce na dálku přez zabezpečené SSH spojení a další). Mezi základní obranou linii patří prvek zvaný \underline{firewall}. O tomto základním prvků pojednává tento dokument. Popíše základní typy firewallů se zaměřením na modernější verze. Také uvede určité základní nástroje, které se dají pro tvoření firewallů použít.
+V dnešní době začíná být vnímána počítačová bezpečnost velmi vážně. Internet je decentralizovana síť, ve které na nás čekají různá nebezpečí. Bezpečnost je proto velice důležitým tématem, protože tuto síť potřebujeme pro naší každodenní práci (vyhledávání informací, elektronická pošta, práce na dálku přes zabezpečené SSH spojení a další). Mezi základní obranou linii sítě patří prvek zvaný \underline{firewall}. O tomto stavebním prvku pojednává tento dokument. Popíši základní typy firewallů se zaměřením na modernější verze. Také uvedu určité základní nástroje, které se dají pro tvoření firewallů použít.
 \end{abstract}
 
-\keywords{Firewall, paketový filtr, stavové paketové filtry, IDS, IPS, Aplikační brána, ISO/OSI}
+\keywords{Firewall, paketový filtr, stavové paketové filtry, IDS, IPS, Aplikační brána, ISO/OSI model, honeypot, mobilita, VPN}
 
 \tableofcontents
 
 \section{Úvod}
 
-Firewall patří mezi základní bezpečnostní mechanismy při výstavbě moderních počítacových sítí. Jeho základním úkolem je provádění filtrace síťového provozu a to jak odchozího, tak i příchozího. Z hlediska bezpečnosti je důležité filtraci a inspekci paketů provádět v obou směrech. Častým omylem je to, že je hlavní inspekce a filtrace provozu prováděna pouze v příchozím směru. Toutu metodou můžeme profiltrovat velkou část nebezpečného provozu v průběhu útoku (například DoS, scan portů ..). Stejně nebezpečný je však i odchozí provoz, kdy může útočník realizovat validní spojení do Internetu, po kterém může být realizován samotný útok do nitra chráněné síťe.
+Firewall patří mezi základní bezpečnostní mechanismy při výstavbě moderních počítacových sítí. Jeho základním úkolem je provádění filtrace síťového provozu a to jak odchozího, tak i příchozího. Z hlediska bezpečnosti je důležité filtraci a inspekci paketů provádět v obou směrech. Častým omylem je to, že je hlavní inspekce a filtrace provozu prováděna pouze v příchozím směru. Touto metodou můžeme profiltrovat velkou část nebezpečného provozu v průběhu útoku (například DoS, scan portů ..). Stejně nebezpečný je však i odchozí provoz, kdy může útočník realizovat validní spojení do Internetu, po kterém může být realizován samotný útok do nitra chráněné sítě. Výběr vhodného firewallu je důležité rozhodnutí, protože zařízení mohou nabídnout různou úroveň beznečnosti, rychlosti a také funkcí. Jednotlivé základní i pokročilé typy jsou rozebrány v dalších kapitolách, kde jsou uvedeny i jednoduché příklady použití.
  
-\section{Základní popis a klasifikace}\label{sec:defend} 
+\section{Základní popis a klasifikace} 
 
 Jak již bylo řečeno, firewall slouží jako základní prvek pro filtraci paketů. A to v jak odchozím, tak i příchozím směru.
 
-Obecně by mohl být firewall definován jako síťové zařízení, které slouží k řízení a zabezpečení síťového provozu mezi síťemi s různou důvěryhodností a zabezpečením. Zjednodušeně se dá říci, že se jedná o bod v síti, kde jsou definována pravidla (ať již omezující nebo povolující) pro komunikaci mezi síťěmi, které se takto oddělují. Základní umístění v síti je naznačeno na obrázku \ref{pic:firewall_base}. Zde je filtrování prováděno mezi naší lokální LAN(local area network) sítí a externí WAN(wide area network) sítí
+Obecně by mohl být firewall definován jako síťové zařízení, které slouží k řízení a zabezpečení síťového provozu mezi síťemi s různou důvěryhodností a zabezpečením. Zjednodušeně se dá říci, že se jedná o bod v síti, kde jsou definována pravidla (ať již omezující nebo povolující) pro komunikaci mezi síťěmi, které se takto oddělují. Základní umístění v síti je naznačeno na obrázku \ref{pic:firewall_base}. Zde je filtrování prováděno mezi naší lokální LAN (local area network) sítí a externí WAN(wide area network) sítí
 
 \begin{figure}[ht]
 	\center
 	\includegraphics[scale=0.3]{./pict/firewall.png}
-	\label{pic:firewall_base}
 	\caption{Základní umístění firewallu \cite{ref:wiki_firewall}}
+	\label{pic:firewall_base}
 \end{figure}
 
 Firewally můžeme klasifikovat pomocí různých kriterií. Mezi základní však patří:
@@ -74,24 +73,23 @@ Firewally můžeme klasifikovat pomocí různých kriterií. Mezi základní vš
 	\item Dle síťové vrstvy, na které provádí inspekci (paketové filtry, stavové firewally, aplikační brány ..)
 \end{itemize} 
 
-Jejich podrobnější popis bude uveden v částech dále následujících.
+%Jejich podrobnější popis bude uveden v částech dále následujících.
 
 \subsection{Dělení dle realizace}
-Zde rozeznáváme dvě kategorie. První kategorií je softwarová realizace a druhou kategorií je hardwarová realizace. Softwarová realizace firewallu patří mezi nejpoužívanější. Mezi její veliké výhody patří jejich přívětivá cena a dostupnost. Navíc není většinou nutné kupovat specializovaný hardware a jsou velice konfiguravatelné. Takovýto softwarový firewall můžeme vytvořit bez větších nákladů pomocí nástoje iptables, který je součástí každé serverové(ale v dnešní době i klientské) linuxové distribuce. Takto vytvořený firewall může však být pro začínajícího administrátora docela komplikovaný, proto je dobré šáhnou i po placených firewallech třetích stran.
+Zde rozeznáváme dvě kategorie. První kategorií je softwarová realizace a druhou kategorií je hardwarová realizace. Softwarová realizace firewallu patří mezi nejpoužívanější. Mezi její veliké výhody patří přívětivá cena a zejména dostupnost tohoto řešení. Navíc není většinou nutné kupovat specializovaný hardware a jsou i velice konfiguravatelné. Softwarový firewall můžeme vytvořit bez větších nákladů pomocí nástoje \textit{iptables}, který je součástí každé serverové (ale v dnešní době i klientské) linuxové distribuce. Takto vytvářený firewall může však být pro začínajícího administrátora docela komplikovaný, proto je dobré sáhnou i po placených firewallech třetích stran.
 
 Mezi základní a nespornou vlastnost hardwarových firewallů patří jejich rychlost. Obsahují totiž hardware, který je navrhnut pro samotnou činnost firewallu. Jejich výměna za modernější verzi je však více nákladná.
 
 \subsection{Dělení dle síťové vrstvy}
 
-\begin{figure}
-	\center
-	\includegraphics[scale=0.25]{./pict/osi.png}
-	\label{pic:osi_model}
-	\caption{ISO/OSI model \cite{ref:osi}}
-\end{figure}
-
 V síťové oblasti se základní funkce dělí do takzvaných vrstev. Jeden z nejpoužívanější je ISO/OSI model. Tento model dělí síťovou komunikaci na sedm vrstev. Nebudu se zde podrobně věnovat popisu jednotlivých vrstev, ale pro pochopení problému filtrace je důležitý aspoň základní popis. ISO/OSI model je naznačen na obrázku \ref{pic:osi_model}. Firewally většinou pracují od vrstvy 3 do vrstvy 7. 
 
+\begin{figure}[ht]
+	\center
+	\includegraphics[scale=0.25]{./pict/osi.png}
+	\caption{ISO/OSI model \cite{ref:osi}}
+	\label{pic:osi_model}
+\end{figure}
 
 Vrstva 3 je vrstva, kam se řadí protokol IP. Zde může být prováděna filtrace na základě IP adresy. Hodně často se však požaduje i filtrace podle takzvaných portů. Porty definuje vrstva číslo 4. Protokoly, které pracují na této vrstvě jsou TCP (Transmission Control Protocol) a UDP(User Datagram Protocol). 
 
@@ -106,77 +104,77 @@ Pomocí tohoto popisu můžeme rozdělit firewally do několika základních kat
 \end{itemize} 
 
 \subsection{Paketové filtry}
-Patří mezi nejstarší formu firewallu. Provádí základní filtraci provozu na vrstvě 3(IP) a 4(TCP/UDP). Výhodou je rychlost a jednoduchost konfigurace. Nevýhodou je nízká úroveň kontroly procházejících spojení. Mezi typické představitele patří nástroj iptables nebo ACL(Access Control Lists) v systému IOS od routerů společnosti Cisco.
+Patří mezi nejstarší formu firewallu. Provádí základní filtraci provozu na vrstvě 3(IP) a 4(TCP/UDP). Výhodou je rychlost a jednoduchost konfigurace. Nevýhodou je nízká úroveň kontroly procházejících spojení. Mezi typické představitele patří nástroj \textit{iptables} nebo ACL(Access Control Lists) v systému IOS od routerů společnosti Cisco.
 
 \subsection{Stavové paketové filtry}
-Tyto firewally provádějí kontrolu stejně jako paketové filtry, navíc si však ukládají informace o povolených spojeních. Například, jestli bylo navázáno spojení pro určitou komunikaci. Pakety, které patří do daného povoleného spojení pak nemusí procházet procesem kontroly a mohou být rovnou povoleny. Stavová inspecke má tedy dvě výhody. První výhodou je urychlení filtrace paketů k již navázanému spojení. Takové pakety nemusí procházet celým rozhodovacím procesem. Druhou výhodou je to, že i když povolíme pouze odchozí směr, tak firewall nám sám povolí příchozí validní komunikaci. Můžeme tak například nastavit jedno pravidlo pro FTP protokol pro odchozí komunikaci a firewall sám povolí porty nutné k úspěšné komunikaci po FTP.
+Tyto firewally provádějí kontrolu stejně jako paketové filtry, navíc si však ukládají informace o povolených spojeních. Například, jestli bylo navázáno spojení pro určitou komunikaci. Pakety, které patří do daného povoleného spojení pak nemusí procházet procesem kontroly a mohou být rovnou povoleny. Stavová inspekce má tedy dvě výhody. První výhodou je urychlení filtrace paketů k již navázanému spojení. Takové pakety nemusí procházet celým rozhodovacím procesem. Druhou výhodou je to, že i když povolíme pouze odchozí směr, tak firewall nám sám povolí příchozí validní komunikaci. Můžeme tak například nastavit jedno pravidlo pro FTP protokol pro odchozí komunikaci a firewall sám povolí porty nutné k úspěšné komunikaci po FTP.
 
-Mezi velké výhody paketových filtrů patří jejich vysoká rychlost, poměrně slušná úroveň zabezpečení a jednodužší konfigurace, která snižuje pravděpodobnost případné chyby v konfiguraci. Oproti aplikačním branám poskytují nižší zabezpečení. Představitelé této kategorie je opět iptables v Linuxu, ipfw v systémech *BSD,starší verze Cisco PIX a Cisco IOS Firewall.
+Mezi velké výhody paketových filtrů patří jejich vysoká rychlost, poměrně slušná úroveň zabezpečení a jednoduší konfigurace, která snižuje pravděpodobnost případné chyby v konfiguraci. Oproti aplikačním branám poskytují nižší zabezpečení. Představiteli této kategorie jsou opět \textit{iptables} v Linuxu, \textit{ipfw} v systémech *BSD, starší verze Cisco PIX a Cisco IOS Firewall.
 
 \subsection{Aplikační brány}
-Aplikační brány jsou známé i pod názvem proxy firewally. Veškerý provoz ze sítě prochází přez tento bod formou dvou spojení. Klient(též zvaný iniciátor) se připojí na proxy server, ten příchozí spojení zpracuje a na základě tohoto požadavku vytvoří spojení na cílový server (v roli aplikačního klienta). Data, která dostane od serveru, poté přepošle klientovi. Kontrola se provádí na aplikační vrstvě (vrstva číslo 7).
+Aplikační brány jsou známé i pod názvem proxy firewally. Veškerý provoz ze sítě prochází přes tento bod formou dvou spojení. Klient (též zvaný iniciátor) se připojí na proxy server, ten příchozí spojení zpracuje a na základě tohoto požadavku vytvoří spojení na cílový server (v roli aplikačního klienta). Data, která dostane od serveru, poté přepošle klientovi. Kontrola se provádí na aplikační vrstvě (vrstva číslo 7).
 
-Vedlejším efektem je to, že server nevidí cílovou adresu klienta, ale adresu proxy serveru. Brány tak automaticky působí jako NAT(Network Address Translation). Funkci NATu mají však i routery a jiné zařízení. Velkou výhodou je bohatá možnost konfigurace, která se zde nabízí. Proxy totiž může nahlédnout do samotného provozu na nejvyšší vrstvě. Získá tak mnohem více informací než paketový filtr nebo stavový paketový filtr.
+Vedlejším efektem je to, že server nevidí cílovou adresu klienta, ale adresu proxy serveru. Brány tak automaticky působí jako NAT(Network Address Translation). Funkci NATu mají také i routery a jiné zařízení. Velkou výhodou je bohatá možnost konfigurace, která se zde nabízí. Proxy totiž může nahlédnout do samotného provozu na nejvyšší vrstvě. Získá tak mnohem více informací než paketový filtr nebo stavový paketový filtr.
 
-Nevýhodou je však náročnost na potřebný hardware. Aplikační brány jsou schopny zpracovat mnohonásobně nižší počet spojení a rychlosti, než paketové filtry. Dalším nepříjemným jevem jsou větší latence.  
+Nevýhodou je jejich náročnost na potřebný hardware. Aplikační brány jsou schopny zpracovat mnohonásobně nižší počet spojení a rychlostí, než paketové filtry. Dalším nepříjemným jevem jsou větší latence.  
 
-I přez tyto nevýhody je tento druh firewallu velice bezpečným a umožňuje dostatečně nakonfigurovat i podrobná pravidla. Bezesporu se jedná o jednoho ze zástupců moderních firewallů. Představitelé této kategorie jsou například The~Firewall~Toolkit~(fwtk) a z něj vycházející Gauntlet.
+I přes uvedené nevýhody je tento druh firewallu velice bezpečným a umožňuje dostatečně nakonfigurovat i podrobná pravidla. Bezesporu se jedná o jednoho ze zástupců moderních firewallů. Představitelé této kategorie jsou například \textit{The~Firewall~Toolkit~(fwtk)} a z něj vycházející \textit{Gauntlet}.
 
 \subsection{Stavové paketové filtry s kontrolou protokolů a IDS}
-Tento druh firewallů si kromě informaci o stavu, schopnosti dynamicky otevírat porty pro různá řídící a datová spojení přináší něco, co se označuje jako \textit{Deep inspection} nebo \textit{Application Intelligence}. Firewally jsou schopny kontrolovat procházející spojení až na datovou úroveň známých protokolů i aplikací. Mohou tak zakazovat například průchod FTP spojení, v němž se objeví indikátory, že se nejedná o FTP spojení, ale tunelování jiného protokolu. Tuto metodu tunelování často využívají P2P sítě(Torrenty, Gnutella, Napster, atd.) Dalším indikátorem může například být nesprávný formát emailové hlavičky. 
+Tento druh firewallů si s sebou kromě informaci o stavu, schopnosti dynamicky otevírat porty pro různá řídící a datová spojení přináší něco, co se označuje jako \textit{Deep inspection} nebo \textit{Application Intelligence}. Firewally jsou schopny kontrolovat procházející spojení až na datovou úroveň známých protokolů i aplikací. Mohou tak zakazovat například průchod FTP spojení, v němž se objeví indikátory, že se nejedná o FTP spojení, ale tunelování jiného protokolu. Tuto metodu tunelování často využívají P2P sítě(Torrenty, Gnutella, Napster, atd.) Dalším indikátorem může například být nesprávný formát emailové hlavičky. 
 
-Nejnověji se do  těchto druhů firewallů implementují takzvané IDS(Intruder Detection System). Jedná se o systém pro detekci útoků, které pracují podobně jako antiviry. V datovém toku vyhledávají pomocí různých heuristických analýz známé vzory, které naznačují možnost útoku. Díky heuristické funkce jsou schopny reagovat i na modifikované typy útoků. Útočníci si ale dávají pozor, aby novější útok nebyl detekovatelný nejnovějšími IDS systémy (a nebo byl aspoň složitěji detekovatelný). Mohou odhalit vzorce útoků i ve zdánlivě nesouvisejících pokusech o spojení, např. skenování adresního rozsahu, rozsahu portů, známé signatury útoků uvnitř povolených spojení a další.
+Nejnověji se do  těchto druhů firewallů implementují takzvané IDS (Intruder Detection System). Jedná se o systém pro detekci útoků, které pracují podobně jako antiviry. V datovém toku vyhledávají pomocí různých heuristických analýz známé vzory, které naznačují možnost útoku. Díky heuristické funkci jsou schopny reagovat i na modifikované typy útoků. Útočníci si ale dávají pozor, aby novější útok nebyl detekovatelný nejnovějšími IDS systémy (a nebo byl aspoň složitěji detekovatelný). Mohou odhalit vzorce útoků i ve zdánlivě nesouvisejících pokusech o spojení, např. skenování adresního rozsahu, rozsahu portů, známé signatury útoků uvnitř povolených spojení a další.
 
 Výhodou těchto systémů je vysoká úroveň bezpečnosti, relativně snadná konfigurace a docela vysoká rychlost inspekce toku. Jsou však pomalejší než stavové paketové filtry.
 
 Nevýhodou je to, že tyto moderní firewally integrují obrovské množství funkcionality a je tak zvýšena pravděpodobnost zneužitelné chyby (nikdo není dokonalý :-), díky které se může útočník dostat do chráněné sítě.
 
-Mezi typické představitele patří produkty řady Netscreen, ISG a SSG společnosti Juniper. Podobnou funkcionalitu nabízi i iptables, který je dostupný v Linuxových distribucích. 
+Mezi typické představitele patří produkty řady Netscreen, ISG a SSG společnosti Juniper. Podobnou funkcionalitu nabízi i \textit{iptables}, který je dostupný v Linuxových distribucích. 
 
 \section{IDS a IPS systémy}
-Dnešní moderní firewally velice často spolupracují s takzvanými systémy IDS(Intrusion Detection System) a IPS(Intrusion Prevention System). Tyto systémy zkoumají veškerý provoz do sedmé vrstvy OSI modelu, který prošel firewallem a mohou monitorovat i vybraná místa vnitřní sítě. Provedou detekci, vyhodnocení úrovně hrozby a podle typu upozornění správce sítě nebo v případě prevenčních systémů přímo provedou odfiltrování škodlivého obsahu na základě porovnání se známými obrazci z databáze. Pokročilejší IDS a IPS systémy mohou používat heuristickou analýzu a uživatelsky definované filtry. 
+Dnešní moderní firewally velice často spolupracují s takzvanými systémy IDS (Intrusion Detection System) a IPS (Intrusion Prevention System). Tyto systémy zkoumají veškerý provoz do sedmé vrstvy OSI modelu, který prošel firewallem a mohou monitorovat i vybraná místa vnitřní sítě. Provedou detekci, vyhodnocení úrovně hrozby a podle typu upozornění správce sítě nebo v případě prevenčních systémů přímo provedou odfiltrování škodlivého obsahu na základě porovnání se známými obrazci z databáze. Pokročilejší IDS a IPS systémy mohou používat heuristickou analýzu a uživatelsky definované filtry. 
 
 \begin{wrapfigure}{l}{0.6\textwidth}
 	\includegraphics[scale=0.4]{./pict/idps.png}
-	\label{pic:idps_sen}
 	\caption{Zapojení sensoru v síti \cite{ref:idps}}
+	\label{pic:idps_sen}
 \end{wrapfigure}
 
-Hlavní rozdíl mezi IDS a IPS systémy je ten, že IDS systémy provádí pouze detekci(neodstraňují hrozbu z toku). IPS systémy jsou schopny na dané nebezpečí reagovat změnou konfigurace prostředí. Mohou tak určitým způsobem eliminovat počáteční hrozbu a dát správci dostatečný čas na to, aby mohl hrozbu eliminovat (popřípadě přeměrovat do části sítě, kde je útočník uzamknut a odkud nemá dále přístup).Mezi typické operace patří ukončování síťových relací, blokování přístupů a v případě nutnosti blokovat veškeré přístu-py než bude problém vyřešen. IPS může také čistit provoz od virů, červů, trójských koní, chrání vnitřní síť před útoky DoS (Denial of Service), DDos(Distributed Denial of Service),atd.
+Hlavní rozdíl mezi IDS a IPS systémy je ten, že IDS systémy provádí pouze detekci (neodstraňují hrozbu z toku). IPS systémy jsou schopny na dané nebezpečí reagovat změnou konfigurace prostředí. Mohou tak určitým způsobem eliminovat počáteční hrozbu a dát správci dostatečný čas na to, aby mohl hrozbu odstranit (popřípadě přeměrovat do části sítě, kde je útočník uzamknut a odkud nemá dále přístup). Mezi typické operace patří ukončování síťových relací, blokování přístupů a v případě nutnosti blokování veškerých přístupů než bude problém vyřešen. IPS může také čistit provoz od virů, červů, trójských koní, chrání vnitřní síť před útoky DoS (Denial of Service), DDoS (Distributed Denial of Service), atd.
 
-Mezi klíčové funkce těchto systémů patří zaznamenávání informací, které souvisí se zjištěným incidentem a informování administrátora bezpečnosti (správce sítě) o incidentu a jeho závažnosti. Tyto systémy však nejsou zcela bezchybné a záleží na jejich kvalitní konfiguraci. Velice zásadním problémem je \textit{záplava incidentů}. Pokud používáme běžné metody notikace formou logů, tak správce může rezignovat na hledání hrozby. Modernější systémy proto používají metody grafické reprezentace, kde se můžou informace zobrazit přehledněji. Mezi slabiny patří detekce nových hrozeb, které se nevystkytují tak často,ale útočí cíleně na ještě nechráněné zranitelnosti v systému. Zapojení sondy je možné vidět na obrázku \ref{pic:idps_sen}.
+Mezi klíčové funkce těchto systémů patří zaznamenávání informací, které souvisí se zjištěným incidentem a informování administrátora bezpečnosti (správce sítě) o incidentu a jeho závažnosti. Ani tyto systémy však nejsou zcela bezchybné a záleží na jejich kvalitní konfiguraci. Zásadním problémem je tzv. \textit{záplava incidentů}. Pokud používáme běžné metody notikace formou logů, tak správce může rezignovat na hledání hrozby. Modernější systémy proto používají metody grafické reprezentace, kde se můžou informace zobrazit přehledněji. Mezi slabiny patří detekce nových hrozeb, které se nevyskytují tak často, ale útočí cíleně na ještě nechráněné zranitelnosti v systému. Zapojení sondy je možné vidět na obrázku \ref{pic:idps_sen}.
 
-Mezi typické analytické metody patří zejména stavová analýza komunikačních protokolu. Příkladem může být například kontrola FTP spojení, kdy neověřený uživatel může provádět určitou podmnožinu operací (zobrazení informací nebo poskytnutí uživatelských jmen a hesel). Pokud takový uživatel začne provádět příkazy, na které logicky nemá narok, je takové spojení považováno za podezřelé a systém může na takovéto chování reagovat uzavřením spojení. Tyto systémy se tedy používají jako vhodný doplněk k moderním firewallovým systémům.
+Mezi typické analytické metody patří zejména stavová analýza komunikačních protokolů. Jako příklad může být uvedena kontrola FTP spojení, kdy neověřený uživatel může provádět určitou podmnožinu operací (zobrazení informací nebo poskytnutí uživatelských jmen a hesel). Pokud neověřený uživatel začne provádět příkazy, na které logicky nemá narok, je možné takovéto spojení považováno za podezřelé a systém může na uvedené chování reagovat uzavřením spojení. Tyto systémy se tedy používají jako vhodný doplněk k moderním firewallovým systémům.
 
-Hodně často se s těmito systémy používá léčka zvaná \textit{honeypot}. V počítačové terminologii se jedná o past, která je nastražna z důvodu detekce, odklonění nebo zpomalení neautorizovaného přístupu k informačnímu systému. Jednodušeji řečeno, jedná se o určitou izolovanou část sítě, která obsahuje komponenty, které jsou monitorovány a kde se útočník nechá nachytat. Bezpečnostní správce má pak více času na zabezpečení a odvrácení hrozby ze strany útočníka. Hodně často používané jsou takzvané E-mailové(spamtrap) a databázové honeypoty. Na databáze se často útočí metodou SQL Injection, kdy se kvůli nedostatečné kontrole vstupních parametrů podaří do programu dostat upravený SQL dotaz. Takovýto dotaz pak může napáchat velké škody. 
+Velice často se s těmito systémy používá léčka zvaná \textit{honeypot}. V počítačové terminologii se jedná o past, která je nastražna z důvodu detekce, odklonění nebo zpomalení neautorizovaného přístupu k informačnímu systému. Jednodušeji řečeno, jedná se o určitou izolovanou část sítě, která obsahuje komponenty, které jsou monitorovány a kde se útočník nechá nachytat. Bezpečnostní správce má pak více času na zabezpečení a odvrácení hrozby ze strany útočníka. Často používané jsou i takzvané E-mailové(spamtrap) a databázové honeypoty. Na databáze se často útočí metodou SQL Injection, kdy se kvůli nedostatečné kontrole vstupních parametrů podaří do programu dostat upravený SQL dotaz. Takovýto dotaz pak může napáchat velké škody. 
 
 Mezi zástupce IDS systému patří například GNU projekt Snort. Mezi IPS systémy můžeme jmenovat produkty řady ASA 5500 od firmy Cisco, produkt IBM Security Network IPS nebo opět GNU projekt Snort. 
 
 \section{Další funkce moderních firewallů}
 \subsection{VPN}
-VPN je zkratka z anglického Virtual Private Network. Díky této technologii můžeme realizovat bezpečné propojení sítí napříč Internetem. Samotná komunikace se provádí přez šifrovaný tunel, který se vytvoří na začátku samotné komunikace. Internet je zde použit jako páteřní síť pro propojení síťových hostů. Výhodou VPN sítí je to, že mohou provádět komunikaci bez nutnosti vytváření nové propojovací infrasturktury.
+VPN je zkratka z anglického Virtual Private Network. Díky této technologii můžeme realizovat bezpečné propojení sítí napříč Internetem. Samotná komunikace se provádí přes šifrovaný tunel, který se vytvoří na začátku komunikace. Internet je zde použit jako páteřní síť pro propojení síťových hostů. Výhodou VPN sítí je to, že mohou provádět komunikaci bez nutnosti vytváření nové propojovací infrasturktury.
 
-Tento bezpečnostní koncept přešel do firewallů, které nyní nově slouží pro propojení uživatelů, firem, a jiných účastníků přez zabezpečené IPSec spojení, které se definuje pomocí \textit{IPSec Working Group}. Pomocí tohoto přístupu se dá jednoduše (s použitím firewallů) realizovat zabezpečený přenos dat bez nutnosti instalace dalších zařízení do sítě.
+Tento bezpečnostní koncept přešel do firewallů, které nyní nově slouží pro propojení uživatelů, firem, a jiných účastníků přes zabezpečené IPSec spojení, které se definuje v tzv. \textit{IPSec Working Group}. Pomocí tohoto přístupu se dá jednoduše (s použitím firewallů) realizovat zabezpečený přenos dat bez nutnosti instalace dalších zařízení do sítě.
 
-Typické architektury jsou host-to-gateway a gateway-to-gateway. Gateway-to-gateway architektura spojuje více fixních bodů přez veřejnou síť. Příkladem může být spojení poboček firmy v různých městech. Host-to-gateway architektura poskytuje bezpečné šifrované spojení do sítě jednotlivým uživatelům. Obyčejně se tito uživatelé nazývají \textit{vzdálení uživatelé}(remote users), kteří jsou typicky lokalizováni mimo síť, do které se přihlašují.
+Typické architektury jsou host-to-gateway a gateway-to-gateway. Gateway-to-gateway architektura spojuje více fixních bodů přes veřejnou síť. Příkladem může být spojení poboček firmy v různých městech. Host-to-gateway architektura poskytuje bezpečné šifrované spojení do sítě jednotlivým uživatelům. Obyčejně se tito uživatelé nazývají \textit{vzdálení uživatelé}(remote users), kteří jsou typicky lokalizováni mimo síť, do které se přihlašují.
 
 \subsection{Autentizace a šifrování}
 Bez autentizace a šifrování se dnes moderní sítě neobejdou. S použitím vhodného šifrování jsou data zabezpečena tak, že potencionální hacker není schopen zjistit dešifrovací klíč a odhalit tak naši komunikaci. Mezi nejpoužívanější protokoly patří IPSec, který se skládá ze dvou částí. První částí je \textit{Authentication Header}(AH), která slouží pro autentizaci dat v zabezpečené komunikaci. Druhou částí je \textit{Encapsulater Security Payload}(EPS), která realizuje samotné šifrování přenášených dat. Pro šifrování se nejvíce používají metody Data Encryption Standard (DES), triple DES (3DES), Define-Hellmann a RSA. Navíc se využívá hashovacích funkcí (MD5,SHA-1), které slouží pro zkonsturování otisku dat předtím, než se odešlou v šifrované podobě. Příjemce zprávy pak šifrovaná data dešifruje a pomocí hashe ověří, že se data po cestě nezměnila.
 
-Větší bezpečnost a přenosové rychlosti mohou být realizovány pomocí duplikování firewallů. Samotná akcelerace šifrování může být realizována embedovaným hardwarem uvnitř firewallu. Navíc se požaduje pokročilá autentizace uživatelů, která je ve valné většině případů centralizovaná (například proti LDAP nebo Active Directory).
+Větší bezpečnost a přenosové rychlosti mohou být realizovány pomocí duplikování firewallů. Samotná akcelerace šifrování může být realizována embedovaným hardwarem uvnitř firewallu. Navíc se požaduje pokročilá autentizace uživatelů, která je ve valné většině případů centralizovaná (například proti LDAP nebo Active Directory serverům).
 
 \subsection{Ochrana proti Malware}
-Ochrana proti je v dnešní době také důležitým tématem. Zřejmě každý z nás používá na své pracovní stanici antivirový program. Ten však nemusí zachytit veškeré hrozby, jelikož se malware stal velice komplexním a může být schopen obejít i moderní obranné systémy. Očividně tak potřebujeme efektivní produkt, který bude určitou rovnováhou mezi použitelností a ochranou. Je totiž celkem pracné udržovat bezpečnostní software na všech pracovních stanicích, kdy může neaktualizovaný stroj představovat slabé místo v systému. Dnešní moderní firewally tedy implementují určitou detekci/protekci proti malwaru.
+Ochrana proti malware je v dnešní době také důležitým tématem. Zřejmě každý z nás používá na své pracovní stanici antivirový program. Ten však nemusí zachytit veškeré hrozby, jelikož se malware stal velice komplexním a může být schopen obejít i moderní obranné systémy. Očividně tak potřebujeme efektivní produkt, který bude určitou rovnováhou mezi použitelností a ochranou. Je totiž celkem pracné udržovat bezpečnostní software na všech pracovních stanicích, kdy může neaktualizovaný stroj představovat slabé místo v systému. Dnešní moderní firewally tedy implementují určitou detekci/protekci proti malwaru.
 
 \subsection{Další užitečné funkce}
-\textbf{Mobilita} --- Zařízení, která jsou dostupná pomocí DNS jmen, přestávají být funkční za firewallem (nejsou dostupné). Musí se totiž provést povolení provozu dovnitř sítě. Skoro vsechny dnešní mobilní telefony umožňují připojení pomocí wifi sítě. Dle studie bude mobilní telefon nejčastějším přístrojem pro přístup k Internetu. Uživatelé proto budou chtít přístup na svá zařízení z Internetu nezávisle na tom, kde se právě nachází. Navíc se stále více začíná používat technologie VoIP, která začíná stále více nahrazovat klasické telefonní sítě. Uživatelé proto budou požadovat určitou funkci roamingu, aby se mohli připojit z jiné organizace do VoIP sítě domácí organizace
+\textbf{Mobilita} --- Zařízení, která jsou dostupná pomocí DNS jmen, přestávají často být funkční za firewallem (nejsou dostupné z Internetovu). Musí se totiž provést povolení provozu dovnitř sítě. Skoro vsechny dnešní mobilní telefony umožňují připojení pomocí wifi sítě. Dle studie bude mobilní telefon nejčastějším přístrojem pro přístup k Internetu. Uživatelé proto budou chtít přístup na svá zařízení z Internetu nezávisle na tom, kde se právě nachází. Navíc se stále více začíná používat technologie VoIP, která stále více nahrazuje klasickou telefonní síť. Uživatelé proto budou požadovat určitou funkci roamingu, aby se mohli připojit z jiného místa do VoIP sítě své domácí organizace
 
 \textbf{Dostupnost} --- Internetové připojení je čím dál důležitější pro podnikání. Navíc se připojení do Internetové sítě stává levnějsím, a proto si firmy mohou dovolit záložní připojení (např. xDSL). Firewall, jakožto hraniční bod sítě, by měl být schopen reagovat na výpadek (například pozměněním své konfigurace) bez nutnosti zásahu administrátora sítě.
 
-\textbf{Management a monitorování} --- Se zvyšujícími se požadavky na dostupnost služeb a sítě je pro administrátory důležité, aby byli schopni jednoduše spravovat a debugovat firewall. Takováto funkce je například důležitá i pro budoucí rozvoj sítě. Nedostatečné monitorování může například vést k tomu, že bude podceněna propustnost linky do Internetu. Toto pak může vést na nedostupnost služeb z venku sítě. 
+\textbf{Management a monitorování} --- Se zvyšujícími se požadavky na dostupnost služeb a sítě je pro administrátory důležité, aby byli schopni jednoduše spravovat a debugovat firewall. Takováto funkce je například důležitá i pro budoucí rozvoj sítě. Nedostatečné monitorování může vést k tomu, že bude podceněna propustnost linky do Internetu, což může vyustít k nedostupnosti konektivity.
 
 \section{Závěr}
-Moderní firewally dnešní doby spolupracují hlavě se systémy IDS a IPS. Důvodem je zejména to, že dokáží doplnit firewall, který provádí zejména filtrování toku (dle stavu protokolu, TCP/UDP portů a IP adres), ale nedokáže detekovat všechny nebezpečí v samotném toku. Pro samotnou hlubší inspekci je nutné nasadit IDS/IPS systém. Takovýto zabezpečovací systém je schopen efektivně obránit perimetr chráněné sítě. Nesmíme se však na tento systém plně spoléhat, protože v dnešní době není nic stoprocentní a to ani drahé a specializované firewallové systémy. Další velice vhodnout metodou je implementovat jednotlivé systémy do samotných zařízení. Takto konceptovaný systém odolá většímu DoS útoku, protože nebude zatežován jediný bod, ale žátěž samotná se rozloží mezi více zařízení. Také útočník má složitější situaci, protože musí zaútočit na dva systémy, které mohou běžet na různých operačních systémech.
+Moderní firewally dnešní doby spolupracují hlavě se systémy IDS a IPS. Důvodem je zejména to, že dokáží doplnit firewall, který provádí zejména filtrování toku (dle stavu protokolu, TCP/UDP portů a IP adres), ale nedokáže detekovat všechny nebezpečí. Pro samotnou hlubší inspekci je nutné nasadit IDS/IPS systém. Takovýto zabezpečovací systém je schopen efektivně obránit perimetr chráněné sítě. Nesmíme se však na tento systém plně spoléhat, protože v dnešní době není nic stoprocentní a to ani drahé a specializované firewallové systémy. Další velice vhodnout metodou je implementovat jednotlivé systémy do samotných zařízení. Takto konceptovaný systém odolá většímu DoS útoku, protože nebude zatežován jediný bod, ale žátěž samotná se rozloží mezi více zařízení. Také útočník má složitější situaci, protože musí zaútočit na dva systémy, které mohou běžet na různých operačních technologických platformách.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Reference																				%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
