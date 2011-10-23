@@ -1,5 +1,5 @@
 BIBTEX=bibtex
-LATEX_PDF=pdflatex
+LATEX_PDF=pdfcslatex
 
 MAIN_FILE=zprava
 PDF_FILE="./zprava"
